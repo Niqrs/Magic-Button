@@ -1,0 +1,1 @@
+package com.niqr.magicbutton.ui.screens.magick
