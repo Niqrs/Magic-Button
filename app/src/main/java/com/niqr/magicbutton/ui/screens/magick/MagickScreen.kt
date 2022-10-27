@@ -16,7 +16,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.niqr.magicbutton.ui.screens.magick.components.MagickFloatingActionButton
 import com.niqr.magicbutton.ui.screens.magick.components.MagickTopAppBar
 import com.niqr.magicbutton.ui.theme.MagicButtonTheme
@@ -25,7 +28,10 @@ import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 @Composable
-fun MagickScreen() {
+fun MagickScreen(
+    viewModel: MagickViewModel,
+    onEditClick: () -> Unit
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
@@ -45,7 +51,8 @@ fun MagickScreen() {
                 MagickTopAppBar(
                     title = "Magick Screen",
                     scrollBehavior = scrollBehavior,
-                    onNavigationClick = { coroutineScope.launch { drawerState.open() }}
+                    onNavigationClick = { coroutineScope.launch { drawerState.open() }},
+                    onEditClick = onEditClick
                 )
             },
             floatingActionButton = {
@@ -70,7 +77,12 @@ fun MagickScreen() {
 @Preview
 @Composable
 private fun MagickScreenPreview() {
+    val context = LocalContext.current
+    val navController = NavHostController(context)
     MagicButtonTheme {
-        MagickScreen()
+        MagickScreen(
+            viewModel = hiltViewModel(),
+            onEditClick = {}
+        )
     }
 }

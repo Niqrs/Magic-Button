@@ -24,7 +24,8 @@ fun MagickTopAppBar(
     modifier: Modifier = Modifier,
     title: String = "",
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    onNavigationClick: () -> Unit = {}
+    onNavigationClick: () -> Unit,
+    onEditClick: () -> Unit
 ) {
     var isFavoriteState by remember {
         mutableStateOf(false)
@@ -45,7 +46,7 @@ fun MagickTopAppBar(
         actions = {
             MagickColorActions(
                 isFavorite = isFavoriteState,
-                onEditClick = { /*TODO()*/ },
+                onEditClick = onEditClick,
                 onFavoriteClick = { isFavoriteState = !isFavoriteState }
             )
         },
@@ -57,6 +58,9 @@ fun MagickTopAppBar(
 @Composable
 private fun MagickTopAppBarPreview() {
     MagicButtonTheme {
-        MagickTopAppBar()
+        MagickTopAppBar(
+            onNavigationClick = {},
+            onEditClick = {}
+        )
     }
 }
