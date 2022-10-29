@@ -11,21 +11,19 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.niqr.magicbutton.ui.screens.magick.components.MagickFloatingActionButton
 import com.niqr.magicbutton.ui.screens.magick.components.MagickTopAppBar
 import com.niqr.magicbutton.ui.theme.MagicButtonTheme
-import com.niqr.magicbutton.ui.utils.generateColor
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @ExperimentalMaterial3Api
 @Composable
 fun MagickScreen(
@@ -35,13 +33,12 @@ fun MagickScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
-    val colors by rememberSaveable() {
-        mutableStateOf(List(25) { generateColor() })
-    }
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MagickColorsDrawer(
         drawerState = drawerState,
-        colors = colors
+        magickColors = uiState.magickColors
     ) {
         Scaffold(
             modifier = Modifier
@@ -51,13 +48,15 @@ fun MagickScreen(
                 MagickTopAppBar(
                     title = "Magick Screen",
                     scrollBehavior = scrollBehavior,
+                    isFavorite = uiState.magickColors.lastOrNull()?.isFavorite ?: false,
+                    onFavoriteClick = viewModel::onFavoriteClick,
                     onNavigationClick = { coroutineScope.launch { drawerState.open() }},
                     onEditClick = onEditClick
                 )
             },
             floatingActionButton = {
                 MagickFloatingActionButton(
-                    onClick = { /*TODO*/ }
+                    onClick = { viewModel.createNewColor() }
                 )
             }
         ) { contentPadding ->
@@ -77,8 +76,6 @@ fun MagickScreen(
 @Preview
 @Composable
 private fun MagickScreenPreview() {
-    val context = LocalContext.current
-    val navController = NavHostController(context)
     MagicButtonTheme {
         MagickScreen(
             viewModel = hiltViewModel(),

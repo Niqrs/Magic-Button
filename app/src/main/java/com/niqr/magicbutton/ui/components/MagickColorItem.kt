@@ -18,8 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.niqr.magicbutton.ui.theme.MagicButtonTheme
-import com.niqr.magicbutton.ui.utils.generateColor
-import com.niqr.magicbutton.ui.utils.toRgbString
+import com.niqr.magicbutton.utils.generateRgbColor
+import com.niqr.magicbutton.utils.toRgbString
 
 @Composable
 fun MagickColorItem(
@@ -57,7 +57,7 @@ private fun MagickColorItemPreview() {
     }
     MagicButtonTheme {
         MagickColorItem(
-            color = generateColor(),
+            color = generateRgbColor(),
             isFavorite = isFavorite,
             onEditClick = {},
             onFavoriteClick = { isFavorite = !isFavorite }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
@@ -23,15 +24,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.niqr.magicbutton.ui.components.MagickColorItem
+import com.niqr.magicbutton.ui.model.MagickColorUiState
 
 @ExperimentalMaterial3Api
 @Composable
 fun MagickColorsDrawer(
     drawerState: DrawerState,
-    colors: List<Color>,
+    magickColors: List<MagickColorUiState>,
     content: @Composable () -> Unit,
     //TODO: OnItemClickListener?
 ) {
@@ -66,10 +67,10 @@ fun MagickColorsDrawer(
                     LazyColumn(
                         modifier = Modifier.padding(paddingValues)
                     ) {
-                        items(colors.size) { it ->
+                        items(magickColors.reversed()) { magickColor ->
                             MagickColorItem(
-                                color = colors[it],
-                                isFavorite = false,
+                                color = magickColor.color,
+                                isFavorite = magickColor.isFavorite,
                                 onEditClick = { /*TODO*/ },
                                 onFavoriteClick = { /*TODO*/ }
                             )
