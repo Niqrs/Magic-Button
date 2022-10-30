@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,6 +33,7 @@ fun MagickScreen(
     onEditClick: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val floatingActionButtonAlpha = 1f - scrollBehavior.state.collapsedFraction
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
@@ -57,6 +60,7 @@ fun MagickScreen(
             },
             floatingActionButton = {
                 MagickFloatingActionButton(
+                    modifier = Modifier.alpha(floatingActionButtonAlpha),
                     onClick = { viewModel.createNewColor() }
                 )
             }
@@ -64,6 +68,8 @@ fun MagickScreen(
             Surface(modifier = Modifier
                 .padding(contentPadding)
                 .fillMaxSize(),
+                color = uiState.magickColors.lastOrNull()?.color
+                    ?: MaterialTheme.colorScheme.surface
             ) {
                 LazyColumn {
                     // It is only for nestedScroll

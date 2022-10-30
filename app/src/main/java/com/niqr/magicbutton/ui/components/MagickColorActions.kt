@@ -8,10 +8,12 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 
 @Composable
 fun MagickColorActions(
+    modifier: Modifier = Modifier,
     clickable: Boolean,
     isFavorite: Boolean,
     onEditClick: () -> Unit,
@@ -22,7 +24,7 @@ fun MagickColorActions(
     else
         Icons.Default.FavoriteBorder
 
-    Row {
+    Row(modifier = modifier) {
         IconButton(
             onClick = onEditClick,
             enabled = clickable

@@ -1,10 +1,15 @@
 package com.niqr.magicbutton.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,23 +34,41 @@ fun MagickColorItem(
     onFavoriteClick: () -> Unit
 ) {
     Surface(
+        modifier = Modifier
+            .padding(
+                top = 2.dp,
+                bottom = 2.dp,
+                end = 32.dp
+            ),
+        shape = RoundedCornerShape(
+            bottomEndPercent = 100,
+            topEndPercent = 100
+        ),
         color = color
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp)
-                .padding(horizontal = 12.dp),
+                .padding(start = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "#${color.toRgbString()}")
-            MagickColorActions(
-                clickable = true,
-                isFavorite = isFavorite,
-                onEditClick = onEditClick,
-                onFavoriteClick = onFavoriteClick
-            )
+            Box(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .fillMaxHeight()
+                    .padding(start = 6.dp, end = 12.dp),
+            ) {
+                MagickColorActions(
+                    modifier = Modifier.align(Alignment.Center),
+                    clickable = true,
+                    isFavorite = isFavorite,
+                    onEditClick = onEditClick,
+                    onFavoriteClick = onFavoriteClick
+                )
+            }
         }
     }
 }

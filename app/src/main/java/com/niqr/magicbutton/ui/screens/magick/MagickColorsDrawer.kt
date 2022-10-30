@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,11 +44,16 @@ fun MagickColorsDrawer(
         mutableStateOf(false)
     }
 
+    val colorsList =
+        if (!onlyFavorite)
+            magickColors.reversed()
+        else
+            magickColors.reversed().filter { it.isFavorite }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                Spacer(Modifier.height(12.dp))
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
@@ -69,17 +76,20 @@ fun MagickColorsDrawer(
                     LazyColumn(
                         modifier = Modifier.padding(paddingValues)
                     ) {
-                        val colorsList =
-                            if (!onlyFavorite)
-                                magickColors.reversed()
-                            else
-                                magickColors.reversed().filter { it.isFavorite }
+                        item { 
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+
                         items(colorsList) { magickColor ->
                             MagickColorItem(
                                 color = magickColor.color,
                                 isFavorite = magickColor.isFavorite,
                                 onEditClick = { /*TODO*/ },
                                 onFavoriteClick = { onFavoriteClick(magickColor.id) }
+                            )
+                            Divider(
+                                modifier = Modifier.height(1.dp).padding(end = 148.dp),
+                                color = DividerDefaults.color.copy(alpha = 0.7f)
                             )
                         }
                     }

@@ -10,9 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MagickFloatingActionButton(onClick: () -> Unit) {
+fun MagickFloatingActionButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     FloatingActionButton(
-        modifier = Modifier.padding(bottom = 16.dp),
+        modifier = modifier.padding(bottom = 16.dp),
         onClick = onClick
     ) {
         Icon(
