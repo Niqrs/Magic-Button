@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun MagickColorActions(
+    clickable: Boolean,
     isFavorite: Boolean,
     onEditClick: () -> Unit,
     onFavoriteClick: () -> Unit
@@ -22,13 +23,19 @@ fun MagickColorActions(
         Icons.Default.FavoriteBorder
 
     Row {
-        IconButton(onClick = onEditClick) {
+        IconButton(
+            onClick = onEditClick,
+            enabled = clickable
+        ) {
             Icon(
                 Icons.Default.Edit,
                 contentDescription = "Edit"
             )
         }
-        IconButton(onClick = onFavoriteClick) {
+        IconButton(
+            onClick = onFavoriteClick,
+            enabled = clickable
+        ) {
             Icon(
                 favoriteIcon,
                 contentDescription = "Save"

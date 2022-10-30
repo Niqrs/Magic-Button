@@ -41,6 +41,7 @@ fun MagickColorItem(
         ) {
             Text(text = "#${color.toRgbString()}")
             MagickColorActions(
+                clickable = true,
                 isFavorite = isFavorite,
                 onEditClick = onEditClick,
                 onFavoriteClick = onFavoriteClick

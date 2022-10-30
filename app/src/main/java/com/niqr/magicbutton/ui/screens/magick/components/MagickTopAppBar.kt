@@ -16,7 +16,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.niqr.magicbutton.ui.components.MagickColorActions
+import com.niqr.magicbutton.ui.model.MagickColorUiState
 import com.niqr.magicbutton.ui.theme.MagicButtonTheme
+import com.niqr.magicbutton.utils.generateRgbColor
 
 @ExperimentalMaterial3Api
 @Composable
@@ -24,7 +26,7 @@ fun MagickTopAppBar(
     modifier: Modifier = Modifier,
     title: String = "",
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    isFavorite: Boolean,
+    magickColor: MagickColorUiState?,
     onFavoriteClick: () -> Unit,
     onNavigationClick: () -> Unit,
     onEditClick: () -> Unit
@@ -43,7 +45,8 @@ fun MagickTopAppBar(
         },
         actions = {
             MagickColorActions(
-                isFavorite = isFavorite,
+                clickable = magickColor != null,
+                isFavorite = magickColor?.isFavorite ?: false,
                 onEditClick = onEditClick,
                 onFavoriteClick = onFavoriteClick
             )
@@ -55,13 +58,15 @@ fun MagickTopAppBar(
 @Preview
 @Composable
 private fun MagickTopAppBarPreview() {
-    var isFavorite by remember {
-        mutableStateOf(false)
+    var magickColor by remember {
+        mutableStateOf(
+            MagickColorUiState(0, generateRgbColor(), false)
+        )
     }
     MagicButtonTheme {
         MagickTopAppBar(
-            isFavorite = isFavorite,
-            onFavoriteClick = {isFavorite = !isFavorite},
+            magickColor = magickColor,
+            onFavoriteClick = {magickColor = magickColor.copy(isFavorite = !magickColor.isFavorite)},
             onNavigationClick = {},
             onEditClick = {}
         )

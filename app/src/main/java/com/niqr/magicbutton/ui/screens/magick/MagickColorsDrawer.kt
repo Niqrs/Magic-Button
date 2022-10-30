@@ -33,7 +33,9 @@ import com.niqr.magicbutton.ui.model.MagickColorUiState
 fun MagickColorsDrawer(
     drawerState: DrawerState,
     magickColors: List<MagickColorUiState>,
+    onFavoriteClick: (Int) -> Unit,
     content: @Composable () -> Unit,
+//    onEditClick: (colorId: Int) -> Unit
     //TODO: OnItemClickListener?
 ) {
     var onlyFavorite by remember {
@@ -67,12 +69,17 @@ fun MagickColorsDrawer(
                     LazyColumn(
                         modifier = Modifier.padding(paddingValues)
                     ) {
-                        items(magickColors.reversed()) { magickColor ->
+                        val colorsList =
+                            if (!onlyFavorite)
+                                magickColors.reversed()
+                            else
+                                magickColors.reversed().filter { it.isFavorite }
+                        items(colorsList) { magickColor ->
                             MagickColorItem(
                                 color = magickColor.color,
                                 isFavorite = magickColor.isFavorite,
                                 onEditClick = { /*TODO*/ },
-                                onFavoriteClick = { /*TODO*/ }
+                                onFavoriteClick = { onFavoriteClick(magickColor.id) }
                             )
                         }
                     }

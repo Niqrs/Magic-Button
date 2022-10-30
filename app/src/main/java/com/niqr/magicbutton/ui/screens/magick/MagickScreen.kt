@@ -38,7 +38,8 @@ fun MagickScreen(
 
     MagickColorsDrawer(
         drawerState = drawerState,
-        magickColors = uiState.magickColors
+        magickColors = uiState.magickColors,
+        onFavoriteClick = viewModel::onFavoriteClick
     ) {
         Scaffold(
             modifier = Modifier
@@ -48,7 +49,7 @@ fun MagickScreen(
                 MagickTopAppBar(
                     title = "Magick Screen",
                     scrollBehavior = scrollBehavior,
-                    isFavorite = uiState.magickColors.lastOrNull()?.isFavorite ?: false,
+                    magickColor = uiState.magickColors.lastOrNull(),
                     onFavoriteClick = viewModel::onFavoriteClick,
                     onNavigationClick = { coroutineScope.launch { drawerState.open() }},
                     onEditClick = onEditClick

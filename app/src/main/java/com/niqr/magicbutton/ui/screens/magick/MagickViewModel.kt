@@ -25,7 +25,7 @@ class MagickViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             magickColorRepository.magickColors().onEach { colors ->
-                val colorItems = colors.map { it.toUiState() }
+                val colorItems = colors.toUiState()
                 _uiState.update {
                     it.copy(magickColors = colorItems)
                 }
@@ -38,7 +38,7 @@ class MagickViewModel @Inject constructor(
         magickColorRepository.generateColor()
     }
 
-    fun onFavoriteClick() {
-        TODO("Not yet implemented")
+    fun onFavoriteClick(id: Int = uiState.value.magickColors.lastIndex) {
+        magickColorRepository.updateFavoriteStatus(id)
     }
 }

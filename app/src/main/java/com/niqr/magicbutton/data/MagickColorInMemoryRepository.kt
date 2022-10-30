@@ -25,22 +25,27 @@ class MagickColorInMemoryRepository : MagickColorRepository {
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private fun emitColorsFlow() {
+        coroutineScope.launch { colorsListFlow.emit(colorsList) }
+    }
+
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            colorsListFlow.emit(colorsList)
-        }
+        emitColorsFlow()
     }
 
     override fun generateColor() {
         colorsList.add(MagickColor(generateRgbColor(), false))
-        CoroutineScope(Dispatchers.IO).launch {
-            colorsListFlow.emit(colorsList)
-        }
+        emitColorsFlow()
     }
 
     override fun magickColors(): Flow<List<MagickColor>> = colorsListFlow
 
     override fun updateFavoriteStatus(magickColorId: Int) {
-        TODO("Not yet implemented")
+        colorsList[magickColorId] =
+            colorsList[magickColorId].copy(
+                isFavorite = !colorsList[magickColorId].isFavorite)
+
+        emitColorsFlow()
     }
 }
