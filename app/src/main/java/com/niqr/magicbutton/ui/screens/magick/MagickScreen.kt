@@ -12,7 +12,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,6 +42,13 @@ fun MagickScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    var openDialog by remember { mutableStateOf(false) }
+    if (openDialog)
+        SettingsDialog(
+            closeDialog = { openDialog = false },
+            onSaveSettings = viewModel::updateColorGenerator
+        )
+
     MagickColorsDrawer(
         drawerState = drawerState,
         magickColors = uiState.magickColors,
@@ -55,7 +65,8 @@ fun MagickScreen(
                     magickColor = uiState.magickColors.lastOrNull(),
                     onFavoriteClick = viewModel::onFavoriteClick,
                     onNavigationClick = { coroutineScope.launch { drawerState.open() }},
-                    onEditClick = onEditClick
+                    onEditClick = onEditClick,
+                    onSettingsClick = { openDialog = true }
                 )
             },
             floatingActionButton = {

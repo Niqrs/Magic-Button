@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.niqr.magicbutton.data.MagickColorRepository
+import com.niqr.magicbutton.data.model.MagickColorGenerator
 import com.niqr.magicbutton.ui.model.toUiState
 import com.niqr.magicbutton.ui.screens.magick.model.MagickScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +33,9 @@ class MagickViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
     }
+    fun updateColorGenerator(
+        magickColorGenerator: MagickColorGenerator
+    ) = magickColorRepository.updateColorGenerator(magickColorGenerator)
 
     fun createNewColor() {
         Log.d("MAGICK", "createNewColor()")
