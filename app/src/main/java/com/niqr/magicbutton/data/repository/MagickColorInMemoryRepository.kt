@@ -1,4 +1,4 @@
-package com.niqr.magicbutton.data
+package com.niqr.magicbutton.data.repository
 
 import com.niqr.magicbutton.data.datastore.StoreColorGenerationPreferences
 import com.niqr.magicbutton.data.model.MagickColor
@@ -6,7 +6,6 @@ import com.niqr.magicbutton.data.model.MagickColorGenerator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -45,10 +44,9 @@ class MagickColorInMemoryRepository @Inject constructor(
 
         coroutineScope.launch{ // Default colors
             colorGenerator.drop(1).take(1).onEach {
-                repeat(5) {
-                    colorsList.add(MagickColor(colorGenerator.value.generateColor(), false))
+                repeat(15) {
+                    generateColor()
                 }
-                emitColorsFlow()
             }.collect()
         }
     }
@@ -60,16 +58,24 @@ class MagickColorInMemoryRepository @Inject constructor(
     }
 
     override fun generateColor() {
-        colorsList.add(MagickColor(colorGenerator.value.generateColor(), false))
-        emitColorsFlow()
+        colorsList.add(
+            MagickColor(
+                id = (colorsList.lastOrNull()?.id ?: -1) +1,
+                color = colorGenerator.value.generateColor(),
+                isFavorite = MutableStateFlow(false)
+            )
+        )
+        emitColorsFlow() //TODO: Do i need it anymore?
     }
 
-    override fun magickColors(): Flow<List<MagickColor>> = colorsListFlow
+    override suspend fun magickColors(pageNumber: Int, pageSize: Int): List<MagickColor> {
+        //TODO: pageNumber is just an id of color, so i should rename it and remove pageSize
+        return listOf(colorsList[pageNumber])
+    }
+
+    override fun lastId(): Int = colorsList.lastIndex
 
     override fun updateFavoriteStatus(magickColorId: Int) {
-        colorsList[magickColorId] =
-            colorsList[magickColorId].copy(
-                isFavorite = !colorsList[magickColorId].isFavorite)
-        emitColorsFlow()
+        colorsList[magickColorId].isFavorite.value = !colorsList[magickColorId].isFavorite.value
     }
 }

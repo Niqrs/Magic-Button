@@ -72,6 +72,9 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation "androidx.datastore:datastore:1.0.0"
 
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-compose:1.0.0-alpha17"
+
     implementation "androidx.navigation:navigation-compose:$nav_version"
 
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha03"

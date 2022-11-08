@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import com.niqr.magicbutton.data.datastore.StoreColorGenerationPreferences
 import com.niqr.magicbutton.ui.components.MagickColorActions
 import com.niqr.magicbutton.ui.model.MagickColorUiState
 import com.niqr.magicbutton.ui.theme.MagicButtonTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @ExperimentalMaterial3Api
 @Composable
@@ -34,6 +36,8 @@ fun MagickTopAppBar(
     onNavigationClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
+    val isFavorite = magickColor?.isFavorite?.collectAsState()?.value ?: false
+
     TopAppBar(
         title = {Text(text = title)},
         modifier = modifier,
@@ -50,7 +54,7 @@ fun MagickTopAppBar(
             Row {
                 MagickColorActions(
                     clickable = magickColor != null,
-                    isFavorite = magickColor?.isFavorite ?: false,
+                    isFavorite = isFavorite,
                     onEditClick = onEditClick,
                     onFavoriteClick = onFavoriteClick
                 )
@@ -72,14 +76,18 @@ private fun MagickTopAppBarPreview() {
     val generator = StoreColorGenerationPreferences.defaultGenerator()
     var magickColor by remember {
         mutableStateOf(
-            MagickColorUiState(0, generator.generateColor(), false)
+            MagickColorUiState(0, generator.generateColor(), MutableStateFlow(false))
         )
     }
     MagicButtonTheme {
         MagickTopAppBar(
             magickColor = magickColor,
             onEditClick = {},
-            onFavoriteClick = {magickColor = magickColor.copy(isFavorite = !magickColor.isFavorite)},
+            onFavoriteClick = {
+                magickColor = magickColor.copy(
+                    isFavorite = MutableStateFlow(!magickColor.isFavorite.value)
+                )
+            },
             onNavigationClick = {},
             onSettingsClick = {}
         )

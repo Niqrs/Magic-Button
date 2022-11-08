@@ -1,8 +1,8 @@
 package com.niqr.magicbutton.di
 
-import com.niqr.magicbutton.data.MagickColorInMemoryRepository
-import com.niqr.magicbutton.data.MagickColorRepository
 import com.niqr.magicbutton.data.datastore.StoreColorGenerationPreferences
+import com.niqr.magicbutton.data.repository.MagickColorInMemoryRepository
+import com.niqr.magicbutton.data.repository.MagickColorRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

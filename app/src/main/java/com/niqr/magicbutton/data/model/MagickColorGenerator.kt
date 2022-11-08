@@ -16,9 +16,9 @@ class MagickColorGenerator(
         greenRange: ClosedFloatingPointRange<Float>,
         blueRange: ClosedFloatingPointRange<Float>
     ) : this(
-        redRange = Pair(redRange.start.roundToInt(), redRange.endInclusive.roundToInt()),
-        greenRange = Pair(greenRange.start.roundToInt(), greenRange.endInclusive.roundToInt()),
-        blueRange = Pair(blueRange.start.roundToInt(), blueRange.endInclusive.roundToInt()),
+        redRange = Pair(redRange.start.roundToInt(), redRange.endInclusive.roundToInt() + 1),
+        greenRange = Pair(greenRange.start.roundToInt(), greenRange.endInclusive.roundToInt() + 1),
+        blueRange = Pair(blueRange.start.roundToInt(), blueRange.endInclusive.roundToInt() + 1),
     )
 
     fun generateColor() = Color(

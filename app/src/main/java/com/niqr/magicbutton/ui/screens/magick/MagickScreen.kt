@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.niqr.magicbutton.ui.screens.magick.components.MagickFloatingActionButton
 import com.niqr.magicbutton.ui.screens.magick.components.MagickTopAppBar
 import com.niqr.magicbutton.ui.theme.MagicButtonTheme
@@ -41,6 +42,7 @@ fun MagickScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val magickColors = uiState.magickColors.collectAsLazyPagingItems()
 
     var openDialog by remember { mutableStateOf(false) }
     if (openDialog)
@@ -51,7 +53,7 @@ fun MagickScreen(
 
     MagickColorsDrawer(
         drawerState = drawerState,
-        magickColors = uiState.magickColors,
+        magickColors = magickColors,
         onFavoriteClick = viewModel::onFavoriteClick
     ) {
         Scaffold(
@@ -62,7 +64,7 @@ fun MagickScreen(
                 MagickTopAppBar(
                     title = "Magick Screen",
                     scrollBehavior = scrollBehavior,
-                    magickColor = uiState.magickColors.lastOrNull(),
+                    magickColor = magickColors.itemSnapshotList.firstOrNull(), //TODO: It doesn't look safety...
                     onFavoriteClick = viewModel::onFavoriteClick,
                     onNavigationClick = { coroutineScope.launch { drawerState.open() }},
                     onEditClick = onEditClick,
@@ -72,14 +74,18 @@ fun MagickScreen(
             floatingActionButton = {
                 MagickFloatingActionButton(
                     modifier = Modifier.alpha(floatingActionButtonAlpha),
-                    onClick = { viewModel.createNewColor() }
+                    onClick = {
+                        viewModel.createNewColor()
+                        //TODO: lazyList should be returned to start
+                        magickColors.retry()
+                    }
                 )
             }
         ) { contentPadding ->
             Surface(modifier = Modifier
                 .padding(contentPadding)
                 .fillMaxSize(),
-                color = uiState.magickColors.lastOrNull()?.color
+                color = magickColors.itemSnapshotList.firstOrNull()?.color //TODO: It doesn't look safety too...
                     ?: MaterialTheme.colorScheme.surface
             ) {
                 LazyColumn {

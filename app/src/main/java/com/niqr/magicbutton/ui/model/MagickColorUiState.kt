@@ -1,19 +1,27 @@
 package com.niqr.magicbutton.ui.model
 
 import androidx.compose.ui.graphics.Color
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.niqr.magicbutton.data.model.MagickColor
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 
 data class MagickColorUiState(
     val id: Int,
     val color: Color,
-    val isFavorite: Boolean
+    val isFavorite: StateFlow<Boolean>
 )
 
-fun List<MagickColor>.toUiState():  List<MagickColorUiState> =
-    this.mapIndexed() { index, magickColor ->
-        MagickColorUiState(
-            index,
-            color = magickColor.color,
-            isFavorite = magickColor.isFavorite
-        )
+
+fun Flow<PagingData<MagickColor>>.toUiState():  Flow<PagingData<MagickColorUiState>> =
+    this.map() { pagingData ->
+        pagingData.map { magickColor ->
+            MagickColorUiState(
+                id = magickColor.id,
+                color = magickColor.color,
+                isFavorite = magickColor.isFavorite
+            )
+        }
     }
