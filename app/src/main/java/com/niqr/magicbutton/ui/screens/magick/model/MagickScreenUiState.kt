@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 data class MagickScreenUiState(
     val magickColors: Flow<PagingData<MagickColorUiState>>,
+    val latestMagickColor: Flow<MagickColorUiState?>
 //    val category: MagickScreenCategory = MagickScreenCategory.AllColors TODO: Should i use it?
 )
 

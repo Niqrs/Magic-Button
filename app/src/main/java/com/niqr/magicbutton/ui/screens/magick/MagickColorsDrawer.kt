@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
@@ -37,6 +38,7 @@ import com.niqr.magicbutton.ui.model.MagickColorUiState
 fun MagickColorsDrawer(
     drawerState: DrawerState,
     magickColors: LazyPagingItems<MagickColorUiState>,
+    colorsListState: LazyListState,
     onFavoriteClick: (Int) -> Unit,
     content: @Composable () -> Unit,
 //    onEditClick: (colorId: Int) -> Unit
@@ -71,6 +73,7 @@ fun MagickColorsDrawer(
                     }
                 ) { paddingValues ->
                     LazyColumn(
+                        state = colorsListState,
                         modifier = Modifier.padding(paddingValues)
                     ) {
                         item { 

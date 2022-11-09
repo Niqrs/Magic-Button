@@ -3,6 +3,7 @@ package com.niqr.magicbutton.ui.screens.magick
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,10 +41,12 @@ fun MagickScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val floatingActionButtonAlpha = 1f - scrollBehavior.state.collapsedFraction
     val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val colorsListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val magickColors = uiState.magickColors.collectAsLazyPagingItems()
+    val latestMagickColor by uiState.latestMagickColor.collectAsState(null)
 
     var openDialog by remember { mutableStateOf(false) }
     if (openDialog)
@@ -54,6 +58,7 @@ fun MagickScreen(
     MagickColorsDrawer(
         drawerState = drawerState,
         magickColors = magickColors,
+        colorsListState = colorsListState,
         onFavoriteClick = viewModel::onFavoriteClick
     ) {
         Scaffold(
@@ -64,7 +69,7 @@ fun MagickScreen(
                 MagickTopAppBar(
                     title = "Magick Screen",
                     scrollBehavior = scrollBehavior,
-                    magickColor = magickColors.itemSnapshotList.firstOrNull(), //TODO: It doesn't look safety...
+                    magickColor = latestMagickColor,
                     onFavoriteClick = viewModel::onFavoriteClick,
                     onNavigationClick = { coroutineScope.launch { drawerState.open() }},
                     onEditClick = onEditClick,
@@ -75,8 +80,10 @@ fun MagickScreen(
                 MagickFloatingActionButton(
                     modifier = Modifier.alpha(floatingActionButtonAlpha),
                     onClick = {
+                        coroutineScope.launch {
+                            colorsListState.scrollToItem(0)
+                        }
                         viewModel.createNewColor()
-                        //TODO: lazyList should be returned to start
                         magickColors.retry()
                     }
                 )
@@ -85,7 +92,7 @@ fun MagickScreen(
             Surface(modifier = Modifier
                 .padding(contentPadding)
                 .fillMaxSize(),
-                color = magickColors.itemSnapshotList.firstOrNull()?.color //TODO: It doesn't look safety too...
+                color = latestMagickColor?.color
                     ?: MaterialTheme.colorScheme.surface
             ) {
                 LazyColumn {

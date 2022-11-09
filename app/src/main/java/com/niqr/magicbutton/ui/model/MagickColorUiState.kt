@@ -18,10 +18,19 @@ data class MagickColorUiState(
 fun Flow<PagingData<MagickColor>>.toUiState():  Flow<PagingData<MagickColorUiState>> =
     this.map() { pagingData ->
         pagingData.map { magickColor ->
-            MagickColorUiState(
-                id = magickColor.id,
-                color = magickColor.color,
-                isFavorite = magickColor.isFavorite
-            )
+            magickColor.toUiState()
         }
     }
+
+@JvmName("toUiStateMagickColorFlow")
+fun Flow<MagickColor?>.toUiState(): Flow<MagickColorUiState?> =
+    this.map { magickColor ->
+        magickColor?.toUiState()
+    }
+
+fun MagickColor.toUiState(): MagickColorUiState =
+    MagickColorUiState(
+        id = this.id,
+        color = this.color,
+        isFavorite = this.isFavorite
+    )

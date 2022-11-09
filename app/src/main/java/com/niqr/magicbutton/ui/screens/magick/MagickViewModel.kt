@@ -19,16 +19,24 @@ import javax.inject.Inject
 class MagickViewModel @Inject constructor(
     private val magickColorRepository: MagickColorRepository
 ) : ViewModel() {
-    private val magickColorsPager = Pager(PagingConfig(pageSize = 1)) { //TODO: optimize it
+    private val magickColorsPager = Pager(
+        PagingConfig(
+            pageSize = 1,
+            prefetchDistance = 30,
+            initialLoadSize = 50,
+            maxSize = 150
+        )
+    ) {
         MagickColorPaginationSource(magickColorRepository)
     }.flow.cachedIn(viewModelScope)
 
-    private val _uiState = MutableStateFlow(MagickScreenUiState(magickColorsPager.toUiState()))
+    private val _uiState = MutableStateFlow(
+        MagickScreenUiState(
+            magickColorsPager.toUiState(),
+            magickColorRepository.lastMagickColor().toUiState()
+        )
+    )
     val uiState = _uiState.asStateFlow()
-
-    init {
-        //?
-    }
 
     fun updateColorGenerator(
         magickColorGenerator: MagickColorGenerator

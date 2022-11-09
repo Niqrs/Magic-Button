@@ -5,13 +5,13 @@ import com.niqr.magicbutton.data.model.MagickColor
 import com.niqr.magicbutton.data.model.MagickColorGenerator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.LinkedList
 import javax.inject.Inject
@@ -24,16 +24,9 @@ class MagickColorInMemoryRepository @Inject constructor(
     private val colorsList = LinkedList(
         listOf<MagickColor>()
     )
-
-    private val colorsListFlow = MutableSharedFlow<List<MagickColor>>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private var lastColor = MutableStateFlow(colorsList.lastOrNull())
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
-    private fun emitColorsFlow() {
-        coroutineScope.launch { colorsListFlow.emit(colorsList) }
-    }
 
     init {
         CoroutineScope(Dispatchers.IO).launch { // Update color generator on each preferences change
@@ -58,19 +51,21 @@ class MagickColorInMemoryRepository @Inject constructor(
     }
 
     override fun generateColor() {
-        colorsList.add(
-            MagickColor(
-                id = (colorsList.lastOrNull()?.id ?: -1) +1,
-                color = colorGenerator.value.generateColor(),
-                isFavorite = MutableStateFlow(false)
-            )
+        val magickColor = MagickColor(
+            id = (colorsList.lastOrNull()?.id ?: -1) +1,
+            color = colorGenerator.value.generateColor(),
+            isFavorite = MutableStateFlow(false)
         )
-        emitColorsFlow() //TODO: Do i need it anymore?
+        colorsList.add(magickColor)
+        lastColor.update { colorsList.lastOrNull() }
     }
 
-    override suspend fun magickColors(pageNumber: Int, pageSize: Int): List<MagickColor> {
-        //TODO: pageNumber is just an id of color, so i should rename it and remove pageSize
-        return listOf(colorsList[pageNumber])
+    override suspend fun magickColor(id: Int): List<MagickColor> {
+        return listOf(colorsList[id])
+    }
+
+    override fun lastMagickColor(): Flow<MagickColor?> {
+        return lastColor
     }
 
     override fun lastId(): Int = colorsList.lastIndex

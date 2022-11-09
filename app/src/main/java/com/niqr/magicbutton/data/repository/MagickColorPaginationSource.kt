@@ -16,13 +16,14 @@ class MagickColorPaginationSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MagickColor> {
-        return try {
-            val pageNumber = params.key ?: repo.lastId()
+        return try { //Loading from high to low
+            val lastId = repo.lastId()
+            val pageId = params.key ?: lastId
 
-            val response = repo.magickColors(pageNumber, 1)
+            val response = repo.magickColor(pageId)
 
-            val prevKey = if (pageNumber > 0) pageNumber + 1 else null
-            val nextKey = if (response.isNotEmpty()) pageNumber - 1 else null
+            val prevKey = if (pageId > 0) pageId + 1 else null
+            val nextKey = if (pageId > 0) pageId - 1 else null
 
             LoadResult.Page(
                 data = response,
