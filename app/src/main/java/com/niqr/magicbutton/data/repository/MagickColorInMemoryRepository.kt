@@ -2,7 +2,6 @@ package com.niqr.magicbutton.data.repository
 
 import com.niqr.magicbutton.data.datastore.StoreColorGenerationPreferences
 import com.niqr.magicbutton.data.model.MagickColor
-import com.niqr.magicbutton.data.model.MagickColorGenerator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,36 +16,21 @@ import java.util.LinkedList
 import javax.inject.Inject
 
 class MagickColorInMemoryRepository @Inject constructor(
-    private val storeColorGenerationPreferences: StoreColorGenerationPreferences
-) : MagickColorRepository {
-    private val colorGenerator = MutableStateFlow(StoreColorGenerationPreferences.defaultGenerator())
+    storeColorGenerationPreferences: StoreColorGenerationPreferences
+) : MagickColorRepository, ColorGeneratorImpl(storeColorGenerationPreferences) {
 
     private val colorsList = LinkedList(
         listOf<MagickColor>()
     )
     private var lastColor = MutableStateFlow(colorsList.lastOrNull())
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
-
     init {
-        CoroutineScope(Dispatchers.IO).launch { // Update color generator on each preferences change
-            storeColorGenerationPreferences.getPreferences.onEach { newGenerator ->
-                colorGenerator.value = newGenerator
-            }.collect()
-        }
-
-        coroutineScope.launch{ // Default colors
+        CoroutineScope(Dispatchers.IO).launch { // Default colors
             colorGenerator.drop(1).take(1).onEach {
                 repeat(15) {
                     generateColor()
                 }
             }.collect()
-        }
-    }
-
-    override fun updateColorGenerator(magickColorGenerator: MagickColorGenerator) {
-        coroutineScope.launch {
-            storeColorGenerationPreferences.savePreferences(magickColorGenerator)
         }
     }
 
