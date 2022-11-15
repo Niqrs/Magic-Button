@@ -21,7 +21,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +38,7 @@ fun MagickColorsDrawer(
     drawerState: DrawerState,
     magickColors: LazyPagingItems<MagickColorUiState>,
     colorsListState: LazyListState,
-    onFavoriteClick: (Int) -> Unit,
+    onFavoriteClick: (MagickColorUiState) -> Unit,
     content: @Composable () -> Unit,
 //    onEditClick: (colorId: Int) -> Unit
     //TODO: OnItemClickListener?
@@ -82,10 +81,9 @@ fun MagickColorsDrawer(
                         items(magickColors) { magickColor ->
                             if (magickColor != null) {
                                 MagickColorItem(
-                                    color = magickColor.color,
-                                    isFavorite = magickColor.isFavorite.collectAsState().value,
+                                    magickColor = magickColor,
                                     onEditClick = { /*TODO*/ },
-                                    onFavoriteClick = { onFavoriteClick(magickColor.id) }
+                                    onFavoriteClick = onFavoriteClick
                                 )
                             }
                             Divider( //TODO: Should it be inside if?

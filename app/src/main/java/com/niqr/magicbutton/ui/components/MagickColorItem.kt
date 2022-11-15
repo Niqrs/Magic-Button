@@ -13,26 +13,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.niqr.magicbutton.data.datastore.StoreColorGenerationPreferences
+import com.niqr.magicbutton.ui.model.MagickColorUiState
 import com.niqr.magicbutton.ui.theme.MagicButtonTheme
 import com.niqr.magicbutton.utils.toRgbString
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun MagickColorItem(
-    color: Color,
-    isFavorite: Boolean,
+    magickColor: MagickColorUiState,
     onEditClick: () -> Unit,
-    onFavoriteClick: () -> Unit
+    onFavoriteClick: (MagickColorUiState) -> Unit
 ) {
+    val isFavorite by magickColor.isFavorite.collectAsState()
+
     Surface(
         modifier = Modifier
             .padding(
@@ -44,7 +44,7 @@ fun MagickColorItem(
             bottomEndPercent = 100,
             topEndPercent = 100
         ),
-        color = color
+        color = magickColor.color
     ) {
         Row(
             modifier = Modifier
@@ -54,7 +54,7 @@ fun MagickColorItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "#${color.toRgbString()}")
+            Text(text = "#${magickColor.color.toRgbString()}")
             Box(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.secondaryContainer)
@@ -66,7 +66,9 @@ fun MagickColorItem(
                     clickable = true,
                     isFavorite = isFavorite,
                     onEditClick = onEditClick,
-                    onFavoriteClick = onFavoriteClick
+                    onFavoriteClick = {
+                        onFavoriteClick(magickColor)
+                    }
                 )
             }
         }
@@ -77,15 +79,16 @@ fun MagickColorItem(
 @Composable
 private fun MagickColorItemPreview() {
     val generator = StoreColorGenerationPreferences.defaultGenerator()
-    var isFavorite by remember {
-        mutableStateOf(false)
-    }
+    val magickColor = MagickColorUiState(
+        id = 0,
+        color = generator.generateColor(),
+        MutableStateFlow(false)
+    )
     MagicButtonTheme {
         MagickColorItem(
-            color = generator.generateColor(),
-            isFavorite = isFavorite,
+            magickColor = magickColor,
             onEditClick = {},
-            onFavoriteClick = { isFavorite = !isFavorite }
+            onFavoriteClick = { i -> i.isFavorite.value = !i.isFavorite.value}
         )
     }
 }

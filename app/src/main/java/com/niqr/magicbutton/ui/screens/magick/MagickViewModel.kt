@@ -4,15 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.cachedIn
 import com.niqr.magicbutton.data.model.MagickColorGenerator
 import com.niqr.magicbutton.data.repository.MagickColorPaginationSource
 import com.niqr.magicbutton.data.repository.MagickColorRepository
+import com.niqr.magicbutton.ui.model.MagickColorUiState
+import com.niqr.magicbutton.ui.model.toEntity
 import com.niqr.magicbutton.ui.model.toUiState
 import com.niqr.magicbutton.ui.screens.magick.model.MagickScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,16 +28,21 @@ class MagickViewModel @Inject constructor(
             pageSize = 1,
             prefetchDistance = 30,
             initialLoadSize = 50,
-            maxSize = 150
+            maxSize = 150,
+            jumpThreshold = 20
         )
     ) {
         MagickColorPaginationSource(magickColorRepository)
-    }.flow.cachedIn(viewModelScope)
+    }.flow
 
     private val _uiState = MutableStateFlow(
         MagickScreenUiState(
             magickColorsPager.toUiState(),
-            magickColorRepository.lastMagickColor().toUiState()
+            magickColorRepository.lastMagickColor().toUiState().stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                null
+            )
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -43,10 +52,15 @@ class MagickViewModel @Inject constructor(
     ) = magickColorRepository.updateColorGenerator(magickColorGenerator)
 
     fun createNewColor() {
-        magickColorRepository.generateColor()
+        viewModelScope.launch {
+            magickColorRepository.generateColor()
+        }
     }
 
-    fun onFavoriteClick(id: Int = magickColorRepository.lastId()) {
-        magickColorRepository.updateFavoriteStatus(id)
+    fun onFavoriteClick(magickColor: MagickColorUiState) {
+        magickColor.isFavorite.value = !magickColor.isFavorite.value
+        viewModelScope.launch {
+            magickColorRepository.updateMagickColor(magickColor.toEntity())
+        }
     }
 }

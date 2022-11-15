@@ -12,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,15 +24,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.niqr.magicbutton.ui.screens.magick.components.MagickFloatingActionButton
 import com.niqr.magicbutton.ui.screens.magick.components.MagickTopAppBar
 import com.niqr.magicbutton.ui.theme.MagicButtonTheme
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @ExperimentalMaterial3Api
 @Composable
 fun MagickScreen(
@@ -44,9 +43,10 @@ fun MagickScreen(
     val colorsListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
     val magickColors = uiState.magickColors.collectAsLazyPagingItems()
-    val latestMagickColor by uiState.latestMagickColor.collectAsState(null)
+    val latestMagickColorFlow = uiState.latestMagickColor
+    val latestMagickColor by latestMagickColorFlow.collectAsState(null)
 
     var openDialog by remember { mutableStateOf(false) }
     if (openDialog)
@@ -99,6 +99,12 @@ fun MagickScreen(
                     // It is only for nestedScroll
                 }
             }
+        }
+    }
+
+    LaunchedEffect(key1 = null) {
+        latestMagickColorFlow.onEach {
+            magickColors.retry()
         }
     }
 }

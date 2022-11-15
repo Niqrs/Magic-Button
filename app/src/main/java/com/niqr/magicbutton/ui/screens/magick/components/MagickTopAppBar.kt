@@ -32,7 +32,7 @@ fun MagickTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     magickColor: MagickColorUiState?,
     onEditClick: () -> Unit,
-    onFavoriteClick: () -> Unit,
+    onFavoriteClick: (MagickColorUiState) -> Unit,
     onNavigationClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -56,7 +56,9 @@ fun MagickTopAppBar(
                     clickable = magickColor != null,
                     isFavorite = isFavorite,
                     onEditClick = onEditClick,
-                    onFavoriteClick = onFavoriteClick
+                    onFavoriteClick = {
+                        onFavoriteClick(magickColor!!)
+                    }
                 )
                 IconButton(onClick = onSettingsClick) {
                     Icon(

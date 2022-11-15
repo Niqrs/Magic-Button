@@ -1,56 +1,42 @@
 package com.niqr.magicbutton.data.repository
 
 import com.niqr.magicbutton.data.datastore.StoreColorGenerationPreferences
+import com.niqr.magicbutton.data.db.MagickColorDao
 import com.niqr.magicbutton.data.model.ColorWrapper
 import com.niqr.magicbutton.data.model.MagickColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.LinkedList
 import javax.inject.Inject
 
-class MagickColorInMemoryRepository @Inject constructor(
-    storeColorGenerationPreferences: StoreColorGenerationPreferences
+class MagickColorDatabaseRepository @Inject constructor(
+    storeColorGenerationPreferences: StoreColorGenerationPreferences,
+    private val magickColorDao: MagickColorDao
 ) : MagickColorRepository, ColorGeneratorImpl(storeColorGenerationPreferences) {
 
-    private val colorsList = LinkedList(
-        listOf<MagickColor>()
-    )
-    private val lastColor = MutableStateFlow(colorsList.lastOrNull())
-
+    private val lastColor = MutableStateFlow<MagickColor?>(null)
     init {
-        CoroutineScope(Dispatchers.IO).launch { // Default colors
-            colorGenerator.drop(1).take(1).onEach {
-                repeat(15) {
-                    generateColor()
-                }
-            }.collect()
+        CoroutineScope(Dispatchers.IO).launch {
+            lastColor.update {
+                magickColorDao.getLastColor()
+            }
         }
     }
 
     override suspend fun generateColor() {
         val magickColor = MagickColor(
-            id = (colorsList.lastOrNull()?.id ?: 0) +1,
+            id = 0,
             color = ColorWrapper(colorGenerator.value.generateColor()),
             isFavorite = MutableStateFlow(false)
         )
-        colorsList.add(magickColor)
-        lastColor.update { colorsList.lastOrNull() }
+        magickColorDao.addColor(magickColor)
     }
 
     override suspend fun magickColor(id: Long): List<MagickColor> {
-        val color: MagickColor = colorsList[id.toInt()]
-//        lastColor.value.run { There should be fix in future
-//            if (this != null && this.id <= id)
-//                lastColor.update {color}
-//        }
+        val color = magickColorDao.getColorById(id)!!
         if ((lastColor.value?.id ?: -1) <= id)
             lastColor.update {color}
         return listOf(color)
@@ -61,10 +47,10 @@ class MagickColorInMemoryRepository @Inject constructor(
     }
 
     override suspend fun lastId(): Long {
-        return lastColor.value?.id ?: -1
+        return magickColorDao.getLastId() ?: -1
     }
 
     override suspend fun updateMagickColor(magickColor: MagickColor) {
-        colorsList[magickColor.id.toInt()] = magickColor
+        magickColorDao.updateColor(magickColor)
     }
 }

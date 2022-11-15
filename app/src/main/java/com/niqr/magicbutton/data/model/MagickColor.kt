@@ -1,10 +1,16 @@
 package com.niqr.magicbutton.data.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.coroutines.flow.MutableStateFlow
-import androidx.compose.ui.graphics.Color
 
+@Entity(tableName = "magick_color")
 data class MagickColor(
-    val id: Int = 0,
-    val color: Color,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
+    @ColumnInfo
+    val color: ColorWrapper,
+    @ColumnInfo
     val isFavorite: MutableStateFlow<Boolean>
 )
