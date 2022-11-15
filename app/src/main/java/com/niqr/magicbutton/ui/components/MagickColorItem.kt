@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun MagickColorItem(
     magickColor: MagickColorUiState,
-    onEditClick: () -> Unit,
+    onCopyClick: (MagickColorUiState) -> Unit,
     onFavoriteClick: (MagickColorUiState) -> Unit
 ) {
     val isFavorite by magickColor.isFavorite.collectAsState()
@@ -65,7 +65,9 @@ fun MagickColorItem(
                     modifier = Modifier.align(Alignment.Center),
                     clickable = true,
                     isFavorite = isFavorite,
-                    onEditClick = onEditClick,
+                    onCopyClick = {
+                        onCopyClick(magickColor)
+                    },
                     onFavoriteClick = {
                         onFavoriteClick(magickColor)
                     }
@@ -87,7 +89,7 @@ private fun MagickColorItemPreview() {
     MagicButtonTheme {
         MagickColorItem(
             magickColor = magickColor,
-            onEditClick = {},
+            onCopyClick = {},
             onFavoriteClick = { i -> i.isFavorite.value = !i.isFavorite.value}
         )
     }

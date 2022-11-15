@@ -31,7 +31,7 @@ fun MagickTopAppBar(
     title: String = "",
     scrollBehavior: TopAppBarScrollBehavior? = null,
     magickColor: MagickColorUiState?,
-    onEditClick: () -> Unit,
+    onCopyClick: (MagickColorUiState) -> Unit,
     onFavoriteClick: (MagickColorUiState) -> Unit,
     onNavigationClick: () -> Unit,
     onSettingsClick: () -> Unit
@@ -55,7 +55,9 @@ fun MagickTopAppBar(
                 MagickColorActions(
                     clickable = magickColor != null,
                     isFavorite = isFavorite,
-                    onEditClick = onEditClick,
+                    onCopyClick = {
+                        onCopyClick(magickColor!!)
+                    },
                     onFavoriteClick = {
                         onFavoriteClick(magickColor!!)
                     }
@@ -84,7 +86,7 @@ private fun MagickTopAppBarPreview() {
     MagicButtonTheme {
         MagickTopAppBar(
             magickColor = magickColor,
-            onEditClick = {},
+            onCopyClick = {},
             onFavoriteClick = {
                 magickColor = magickColor.copy(
                     isFavorite = MutableStateFlow(!magickColor.isFavorite.value)

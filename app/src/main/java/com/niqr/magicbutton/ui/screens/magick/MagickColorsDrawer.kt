@@ -38,10 +38,9 @@ fun MagickColorsDrawer(
     drawerState: DrawerState,
     magickColors: LazyPagingItems<MagickColorUiState>,
     colorsListState: LazyListState,
+    onCopyClick: (MagickColorUiState) -> Unit,
     onFavoriteClick: (MagickColorUiState) -> Unit,
-    content: @Composable () -> Unit,
-//    onEditClick: (colorId: Int) -> Unit
-    //TODO: OnItemClickListener?
+    content: @Composable () -> Unit
 ) {
     var onlyFavorite by remember {
         mutableStateOf(false)
@@ -82,7 +81,7 @@ fun MagickColorsDrawer(
                             if (magickColor != null) {
                                 MagickColorItem(
                                     magickColor = magickColor,
-                                    onEditClick = { /*TODO*/ },
+                                    onCopyClick = onCopyClick,
                                     onFavoriteClick = onFavoriteClick
                                 )
                             }

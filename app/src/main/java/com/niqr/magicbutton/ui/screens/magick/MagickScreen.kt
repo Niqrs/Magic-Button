@@ -22,20 +22,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.niqr.magicbutton.ui.screens.magick.components.MagickFloatingActionButton
 import com.niqr.magicbutton.ui.screens.magick.components.MagickTopAppBar
 import com.niqr.magicbutton.ui.theme.MagicButtonTheme
+import com.niqr.magicbutton.utils.toRgbString
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 @Composable
 fun MagickScreen(
-    viewModel: MagickViewModel,
-    onEditClick: () -> Unit
+    viewModel: MagickViewModel
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val floatingActionButtonAlpha = 1f - scrollBehavior.state.collapsedFraction
@@ -47,6 +49,8 @@ fun MagickScreen(
     val magickColors = uiState.magickColors.collectAsLazyPagingItems()
     val latestMagickColorFlow = uiState.latestMagickColor
     val latestMagickColor by latestMagickColorFlow.collectAsState(null)
+    
+    val clipboardManager = LocalClipboardManager.current
 
     var openDialog by remember { mutableStateOf(false) }
     if (openDialog)
@@ -59,6 +63,9 @@ fun MagickScreen(
         drawerState = drawerState,
         magickColors = magickColors,
         colorsListState = colorsListState,
+        onCopyClick = {
+            clipboardManager.setText(AnnotatedString(it.color.toRgbString()))
+        },
         onFavoriteClick = viewModel::onFavoriteClick
     ) {
         Scaffold(
@@ -72,7 +79,9 @@ fun MagickScreen(
                     magickColor = latestMagickColor,
                     onFavoriteClick = viewModel::onFavoriteClick,
                     onNavigationClick = { coroutineScope.launch { drawerState.open() }},
-                    onEditClick = onEditClick,
+                    onCopyClick = {
+                        clipboardManager.setText(AnnotatedString(it.color.toRgbString()))
+                    },
                     onSettingsClick = { openDialog = true }
                 )
             },
@@ -115,8 +124,7 @@ fun MagickScreen(
 private fun MagickScreenPreview() {
     MagicButtonTheme {
         MagickScreen(
-            viewModel = hiltViewModel(),
-            onEditClick = {}
+            viewModel = hiltViewModel()
         )
     }
 }

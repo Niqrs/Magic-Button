@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.niqr.magicbutton.navigation.NavigationTree
-import com.niqr.magicbutton.ui.screens.edit.EditScreen
 import com.niqr.magicbutton.ui.screens.magick.MagickScreen
 import com.niqr.magicbutton.ui.screens.magick.MagickViewModel
 
@@ -19,11 +18,7 @@ fun MagickButtonScreen() {
     NavHost(navController = navController, startDestination = NavigationTree.Magick.name) {
         composable(NavigationTree.Magick.name) {
             val viewModel: MagickViewModel = hiltViewModel()
-            MagickScreen(viewModel) { navController.navigate(NavigationTree.Edit.name) }
-        }
-        composable(NavigationTree.Edit.name) {
-//            val viewModel: EditViewModel = hiltViewModel()
-            EditScreen(/*viewModel()*/)
+            MagickScreen(viewModel)
         }
     }
 }
