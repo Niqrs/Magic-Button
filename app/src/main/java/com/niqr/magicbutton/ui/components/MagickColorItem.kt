@@ -12,16 +12,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.niqr.magicbutton.data.datastore.StoreColorGenerationPreferences
 import com.niqr.magicbutton.ui.model.MagickColorUiState
 import com.niqr.magicbutton.ui.theme.MagicButtonTheme
+import com.niqr.magicbutton.utils.isDark
 import com.niqr.magicbutton.utils.toRgbString
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -32,6 +36,7 @@ fun MagickColorItem(
     onFavoriteClick: (MagickColorUiState) -> Unit
 ) {
     val isFavorite by magickColor.isFavorite.collectAsState()
+    val context = LocalContext.current
 
     Surface(
         modifier = Modifier
@@ -54,7 +59,11 @@ fun MagickColorItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "#${magickColor.color.toRgbString()}")
+            Text(
+                text = "#${magickColor.color.toRgbString()}",
+                color = if (magickColor.color.isDark()) dynamicDarkColorScheme(context).onSurface
+                        else dynamicLightColorScheme(context).onSurface
+            )
             Box(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.secondaryContainer)
