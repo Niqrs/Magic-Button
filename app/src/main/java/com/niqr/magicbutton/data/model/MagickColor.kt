@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Entity(tableName = "magick_color")
 data class MagickColor(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Int,
     @ColumnInfo
     val color: ColorWrapper,
-    @ColumnInfo
+    @ColumnInfo(name = "is_favorite")
     val isFavorite: MutableStateFlow<Boolean>
 )

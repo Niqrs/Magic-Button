@@ -1,5 +1,6 @@
 package com.niqr.magicbutton.data.repository
 
+import androidx.paging.PagingSource
 import com.niqr.magicbutton.data.datastore.StoreColorGenerationPreferences
 import com.niqr.magicbutton.data.model.ColorWrapper
 import com.niqr.magicbutton.data.model.MagickColor
@@ -45,8 +46,8 @@ class MagickColorInMemoryRepository @Inject constructor(
         lastColor.update { colorsList.lastOrNull() }
     }
 
-    override suspend fun magickColor(id: Long): List<MagickColor> {
-        val color: MagickColor = colorsList[id.toInt()]
+    override suspend fun magickColor(id: Int): List<MagickColor> {
+        val color: MagickColor = colorsList[id]
 //        lastColor.value.run { There should be fix in future
 //            if (this != null && this.id <= id)
 //                lastColor.update {color}
@@ -60,11 +61,15 @@ class MagickColorInMemoryRepository @Inject constructor(
         return lastColor
     }
 
-    override suspend fun lastId(): Long {
+    override fun favoriteColors(): PagingSource<Int, MagickColor> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun lastId(): Int {
         return lastColor.value?.id ?: -1
     }
 
     override suspend fun updateMagickColor(magickColor: MagickColor) {
-        colorsList[magickColor.id.toInt()] = magickColor
+        colorsList[magickColor.id] = magickColor
     }
 }

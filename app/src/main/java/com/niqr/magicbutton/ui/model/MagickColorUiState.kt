@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
 data class MagickColorUiState(
-    val id: Long,
+    val id: Int,
     val color: Color,
     val isFavorite: MutableStateFlow<Boolean>
 )

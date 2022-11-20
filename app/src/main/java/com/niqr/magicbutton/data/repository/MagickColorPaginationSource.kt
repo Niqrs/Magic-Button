@@ -6,18 +6,18 @@ import com.niqr.magicbutton.data.model.MagickColor
 
 class MagickColorPaginationSource(
     private val repo: MagickColorRepository
-): PagingSource<Long, MagickColor>() {
+): PagingSource<Int, MagickColor>() {
     override val jumpingSupported: Boolean
         get() = true
 
-    override fun getRefreshKey(state: PagingState<Long, MagickColor>): Long? {
+    override fun getRefreshKey(state: PagingState<Int, MagickColor>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, MagickColor> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MagickColor> {
         return try { //Loading from high to low
             val lastId = repo.lastId()
             val pageId = params.key ?: lastId

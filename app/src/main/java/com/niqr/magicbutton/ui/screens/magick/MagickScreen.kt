@@ -46,7 +46,8 @@ fun MagickScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val uiState by viewModel.uiState.collectAsState()
-    val magickColors = uiState.magickColors.collectAsLazyPagingItems()
+    val allMagickColors = uiState.allMagickColors.collectAsLazyPagingItems()
+    val favoriteMagickColors = uiState.favoriteMagickColors.collectAsLazyPagingItems()
     val latestMagickColorFlow = uiState.latestMagickColor
     val latestMagickColor by latestMagickColorFlow.collectAsState(null)
     
@@ -61,7 +62,9 @@ fun MagickScreen(
 
     MagickColorsDrawer(
         drawerState = drawerState,
-        magickColors = magickColors,
+        allMagickColors = allMagickColors,
+        favoriteMagickColors = favoriteMagickColors,
+        latestMagickColor = latestMagickColor,
         colorsListState = colorsListState,
         onCopyClick = {
             clipboardManager.setText(AnnotatedString(it.color.toRgbString()))
@@ -93,7 +96,7 @@ fun MagickScreen(
                             colorsListState.scrollToItem(0)
                         }
                         viewModel.createNewColor()
-                        magickColors.retry()
+                        allMagickColors.retry()
                     }
                 )
             }
@@ -113,7 +116,7 @@ fun MagickScreen(
 
     LaunchedEffect(key1 = null) {
         latestMagickColorFlow.onEach {
-            magickColors.retry()
+            allMagickColors.retry()
         }
     }
 }

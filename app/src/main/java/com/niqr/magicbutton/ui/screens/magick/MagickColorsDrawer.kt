@@ -1,16 +1,11 @@
 package com.niqr.magicbutton.ui.screens.magick
 
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,17 +21,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.items
-import com.niqr.magicbutton.ui.components.MagickColorItem
 import com.niqr.magicbutton.ui.model.MagickColorUiState
+import com.niqr.magicbutton.ui.screens.magick.components.AllMagickColors
+import com.niqr.magicbutton.ui.screens.magick.components.FavoriteMagickColors
 
 @ExperimentalMaterial3Api
 @Composable
 fun MagickColorsDrawer(
     drawerState: DrawerState,
-    magickColors: LazyPagingItems<MagickColorUiState>,
+    allMagickColors: LazyPagingItems<MagickColorUiState>,
+    favoriteMagickColors: LazyPagingItems<MagickColorUiState>,
+    latestMagickColor: MagickColorUiState?,
     colorsListState: LazyListState,
     onCopyClick: (MagickColorUiState) -> Unit,
     onFavoriteClick: (MagickColorUiState) -> Unit,
@@ -70,28 +66,23 @@ fun MagickColorsDrawer(
                         }
                     }
                 ) { paddingValues ->
-                    LazyColumn(
-                        state = colorsListState,
-                        modifier = Modifier.padding(paddingValues)
-                    ) {
-                        item { 
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                        items(magickColors) { magickColor ->
-                            if (magickColor != null) {
-                                MagickColorItem(
-                                    magickColor = magickColor,
-                                    onCopyClick = onCopyClick,
-                                    onFavoriteClick = onFavoriteClick
-                                )
-                            }
-                            Divider( //TODO: Should it be inside if?
-                                modifier = Modifier
-                                    .height(1.dp)
-                                    .padding(end = 148.dp),
-                                color = DividerDefaults.color.copy(alpha = 0.7f)
-                            )
-                        }
+                    if (!onlyFavorite) {
+                        AllMagickColors(
+                            modifier = Modifier.padding(paddingValues),
+                            magickColors = allMagickColors,
+                            onCopyClick = onCopyClick,
+                            onFavoriteClick = onFavoriteClick,
+                            colorsListState = colorsListState
+                        )
+                    } else {
+                        FavoriteMagickColors(
+                            modifier = Modifier.padding(paddingValues),
+                            magickColors = favoriteMagickColors,
+                            latestMagickColor = latestMagickColor,
+                            onCopyClick = onCopyClick,
+                            onFavoriteClick = onFavoriteClick,
+                            colorsListState = colorsListState
+                        )
                     }
                 }
             }

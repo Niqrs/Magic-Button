@@ -6,11 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 data class MagickScreenUiState(
-    val magickColors: Flow<PagingData<MagickColorUiState>>,
+    val allMagickColors: Flow<PagingData<MagickColorUiState>>,
+    val favoriteMagickColors: Flow<PagingData<MagickColorUiState>>,
     val latestMagickColor: Flow<MagickColorUiState?>
-//    val category: MagickScreenCategory = MagickScreenCategory.AllColors TODO: Should i use it?
 )
-
-//enum class MagickScreenCategory {
-//    AllColors, FavoriteColors
-//}
