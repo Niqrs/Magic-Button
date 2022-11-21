@@ -1,13 +1,13 @@
 package com.niqr.magicbutton.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,50 +40,43 @@ fun MagickColorItem(
     val isFavorite by magickColor.isFavorite.collectAsState()
     val context = LocalContext.current
 
-    Surface(
+    Row(
         modifier = Modifier
-            .padding(
-                top = 2.dp,
-                bottom = 2.dp,
-                end = 32.dp
-            ),
-        shape = RoundedCornerShape(
-            bottomEndPercent = 100,
-            topEndPercent = 100
-        ),
-        color = magickColor.color
+            .padding(top = 2.dp, bottom = 2.dp, end = 32.dp)
+            .clip(RoundedCornerShape(bottomEndPercent = 100, topEndPercent = 100))
+            .fillMaxWidth()
+            .height(64.dp),
+        verticalAlignment = CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .padding(start = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        Surface(
+            modifier = Modifier.fillMaxHeight().weight(1f),
+            color = magickColor.color
         ) {
             Text(
+                modifier = Modifier.padding(start = 12.dp).wrapContentHeight(CenterVertically),
                 text = "#${magickColor.color.toRgbString()}",
                 color = if (magickColor.color.isDark()) dynamicDarkColorScheme(context).onSurface
-                        else dynamicLightColorScheme(context).onSurface
+                else dynamicLightColorScheme(context).onSurface
             )
-            Box(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
-                    .fillMaxHeight()
-                    .padding(start = 6.dp, end = 12.dp),
-            ) {
-                MagickColorActions(
-                    modifier = Modifier.align(Alignment.Center),
-                    clickable = true,
-                    isFavorite = isFavorite,
-                    onCopyClick = {
-                        onCopyClick(magickColor)
-                    },
-                    onFavoriteClick = {
-                        onFavoriteClick(magickColor)
-                    }
-                )
-            }
+        }
+
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .fillMaxHeight()
+                .padding(start = 6.dp, end = 12.dp),
+        ) {
+            MagickColorActions(
+                modifier = Modifier.align(Alignment.Center),
+                clickable = true,
+                isFavorite = isFavorite,
+                onCopyClick = {
+                    onCopyClick(magickColor)
+                },
+                onFavoriteClick = {
+                    onFavoriteClick(magickColor)
+                }
+            )
         }
     }
 }
