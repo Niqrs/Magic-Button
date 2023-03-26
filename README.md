@@ -1,7 +1,7 @@
-Magic-Button
+Magic Button
 ============
 
-Magic-Button is an Android app that generates random colors based on user-defined properties. You can customize the generation parameters to create a wide range of colors, and view the entire history of generated colors. Additionally, you can save your favorite colors for future reference.
+Magic Button is an Android app that generates random colors based on user-defined properties. You can customize the generation parameters to create a wide range of colors, and view the entire history of generated colors. Additionally, you can save your favorite colors for future reference.
 
 Features
 --------
@@ -14,7 +14,7 @@ Features
 Installation
 ------------
 
-To use Magic-Button, simply download the app from GitHub and install it on your Android device. Follow these steps:
+To use Magic Button, simply download the app from GitHub and install it on your Android device. Follow these steps:
 
 1.  Clone the Magic-Button repository to your local machine: `git clone https://github.com/Niqrs/Magic-Button.git`.
 2.  Open the project in Android Studio.
