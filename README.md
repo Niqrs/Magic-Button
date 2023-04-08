@@ -11,6 +11,13 @@ Features
 *   View the entire history of generated colors.
 *   Save your favorite colors for future reference.
 
+## Screenshots
+| Light mode | Dark mode |
+| :---: | :---: |
+| <img src="https://user-images.githubusercontent.com/97764208/230715266-8fff0396-4d92-4580-92be-64b95d47c94b.png" width="300" /> | <img src="https://user-images.githubusercontent.com/97764208/230715358-4928f605-e969-4c92-a2ff-8d9fe70dd9ea.png" width="300" />|
+| <img src="https://user-images.githubusercontent.com/97764208/230715862-7d32eb8d-5092-4555-8e8f-13ede8a65229.png" width="300" /> | <img src="https://user-images.githubusercontent.com/97764208/230715908-2c89da7c-6327-401c-9aad-8d4cde6f989a.png" width="300" />|
+| <img src="https://user-images.githubusercontent.com/97764208/230715870-e3f6cb01-00ec-4de8-99f3-8cf925dc197f.png" width="300" /> | <img src="https://user-images.githubusercontent.com/97764208/230715915-92a42edc-d5a8-42b9-b53f-f374ec1abf8b.png" width="300" />|
+
 
 ## Technologies Used
 
