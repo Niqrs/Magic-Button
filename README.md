@@ -20,6 +20,7 @@ Magic-Button is built using the following technologies:
 - [Room Database](https://developer.android.com/topic/libraries/architecture/room) for saving all colors
 - [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) for paging whole colors history in lists
 - [Jetpack Compose](https://developer.android.com/jetpack/compose) for building the user interface
+- [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) for color generation preferences
 
 Installation
 ------------
