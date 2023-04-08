@@ -11,6 +11,16 @@ Features
 *   View the entire history of generated colors.
 *   Save your favorite colors for future reference.
 
+
+## Technologies Used
+
+Magic-Button is built using the following technologies:
+
+- [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) for dependency injection
+- [Room Database](https://developer.android.com/topic/libraries/architecture/room) for saving all colors
+- [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) for paging whole colors history in lists
+- [Jetpack Compose](https://developer.android.com/jetpack/compose) for building the user interface
+
 Installation
 ------------
 
@@ -25,4 +35,4 @@ Alternatively, you can build an APK file and install it manually.
 License
 -------
 
-This app is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+This app is licensed under the [MIT License](https://github.com/Niqrs/Magic-Button/blob/master/LICENSE.md).
